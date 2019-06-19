@@ -1,0 +1,95 @@
+splitword and splittitle for the title version
+	  Index on: Year, All Words 2-100 letters long
+	  Search on: Year, Last name of first author, Longest word in title, Second longest word in title
+
+splityear and splitcode for the page-vol version
+	  Index on: Year, all Numbers
+	  Search on: Year, Last name of first author, First Page (or Volume # if no First Page)
+
+
+WOS source data directory: /projectnb/marxnsf1/dropbox/bigdata/nplmatch/inputs/wos/
+
+Microsoft data in /projectnb/marxnsf1/dropbox/bigdata/nplmatch/inputs/mag
+DOCUMENT BETTER WHERE THE MAG DATA COME FROM
+ALSO DOCUMENT WHERE THE NPLS COME FROM
+
+Source files for buildtitleregex_byyear.pl (in both splittitle and splitcode directories):
+       WOS: /projectnb/marxnsf1/dropbox/bigdata/nplmatch/inputs/wos/wosplpubinfo1955-2017_filteredISS.txt (58M lines)
+       MAG: /projectnb/marxnsf1/dropbox/bigdata/nplmatch/inputs/mag/mergedmagfornpl-fixednames.tsv (150M lines) 
+       Both of these files have been run through 'iconv -f UTF8 -t US-ASCII//TRANSLIT' to deal with Chinese and other odd characters.  Lines with no first author or ? characters or a single character as the first author last name are also skipped in the MAG file.
+       In the MAG file, Greek letters are also specially preserved as 'alpha', 'beta', 'gamma', 'delta', 'kappa', 'lambda'.
+  
+
+
+
+######################################################################
+RUNNING SCRIPTS FOR SPLITWORD/SPLITTITLE VERSION
+
+Directories:
+	/projectnb/marxnsf1/dropbox/bigdata/nplmatch/splitword
+	/projectnb/marxnsf1/dropbox/bigdata/nplmatch/splittitle
+
+Command to create regular expressions:
+buildtitleregex.pl mag|wos|FILENAME_IN_SAME_FORMAT_AS_OTHER_FILES (used as INDICATOR below - for the FILENAME version, the INDICATOR is "file") #### (YEAR)
+    overwrites files in year_regex_scripts_INDICATOR/ with Perl scripts to do regular expressions matches for each year found in source data file.
+
+Regular expression matches when finally run by sge_runsplitregex_INDICATOR.sh look for a file in splitword/YYYY/FIRSTLETTER/SECONDLETTER/ with the longest word in the article title and separately for the second longes word in the article title; this is basically a hash of the patent file by both year and words in the patent file citation line in order to greatly speed up the computation.  Within that file, there must then be a match on the last name of the first author.  
+
+***Process (complete each step before moving on to the next - do NOT do in parallel!):***
+1) Run array job of 'splitword/splitword.pl' for 1900-2017 (qsub splitword.sh) - creates directories 'splitword/####/a/b/abracadabra' for all of 1900-2017 - basically a hash of all of the words in each patent citation.
+
+2A) Check permissions on files in 'splittile/year_regex_scripts_INDICATOR/' to make sure you can write to that directory.  You may want to delte all the files in the directory although the script should overwrite them fine if not.
+2B) Run 'splittitle/buildtitleregex_1799_lev.pl mag.' this will generate rules for NPLs missing years
+2C) Run 'splittitle/sge_buildtitleregex_magLEV.sh'. this will generate rules for NPLs with years in them - this will generate year regular expression files in 'splittile/year_regex_scripts_INDICATOR/year####.pl'.  For efficiency it wants to know what words were found in the Patent citation files by splitword.pl so this part of things will not work propely if 'splitword/splitword.pl' has not been run first.  This script also does regenerate the shortlongwords_INDICATOR.txt file.
+
+
+3A) Delete any files in 'splittitle/year_regex_output_INDICATOR/'.  The sge script will not right now overwrite existing files.
+3B) Run 'splittitle/set_sge_lev_INDICATOR.sh. This will process the 1800-2018 files as well as the 1799 "non-year" files.  This will output to 'splittitle/year_regex_output_INDICATOR/year####-####.txt'. !!! I THINK THE WOS VERSION WORKS WITHOUT SEGMENTING??
+
+
+
+
+
+######################################################################
+RUNNING SCRIPTS FOR SPLITYEAR/SPLITCODE VERSION
+
+Directories:
+	/projectnb/marxnsf1/dropbox/bigdata/nplmatch/splityear
+	/projectnb/marxnsf1/dropbox/bigdata/nplmatch/splitcode
+
+Command to create regular expressions:
+buildsplitregex_byyear.pl mag|wos|FILENAME_IN_SAME_FORMAT_AS_OTHER_FILES (used as INDICATOR below - for the FILENAME version, the INDICATOR is "file") #### (Year)
+    overwrites files in year_regex_scripts_INDICATOR/ with Perl scripts to do regular expressions matches for each year found in source data file.
+
+Regular expression matches when finally run by sge_runregex_INDICATOR.sh look for a file in splityear/YYYY/ with the First Page # (or Volume # if there is no First Page #) of the article; this is basically a hash of the patent file by numbers in the lines in order to greatly speed up the computation.  Within that file, there must then be a match on the last name of the first author.  If that match succeeds, there must be a match on the First Page # (or Volume # if there is no First Page #).
+
+
+***Process (complete each step before moving on to the next - do NOT do in parallel!):***
+1A) You may want to delete all of the YYYY/ directories.  Files in these directories are overwritten but if there was a number that occurred earlier and does not now, it would not be removed and would be matched against later.
+1B) Run 'splityear/splityear.sh' to launch an array job of 'splityear.pl YYYY'  This is based on the patent data sourcefiles in /projectnb/marxnsf1/dropbox/bigdata/nplmatch/nplbyrefyear/nplc_YYYY.tsv and outputs to files of the form 'splityear/YYYY/#' so that for any given #, you will see every patent line that has that number appearing anywhere in it.  The purpose of this code is basically to create a hash based on every number that appears in a patent citation line, regardless of its purpose.  This hash greatly speeds up the computation.  A line that says "issue 604, page 27-85" will end up appearing in all of the files "604", "27", and "85".  
+
+2A) Check permissions on files in 'splitcode/year_regex_scripts_INDICATOR/' to make sure you can write to that directory.  You may want to delete all the files in the directory although the script should overwrite them fine if not.
+2B) Run 'splitcode/buildsplitregex_1799_lev.pl INDICATOR. this will generate nonyear regular expression files in 'splitcode/year_regex_scripts_INDICATOR/year1799-####.pl'.  
+2C) run 'splitcode/sge_buildsplitregex_lev_INDICATOR.sh. this will generate year regular expression files in 'splitcode/year_regex_scripts_INDICATOR/year{1800-2018}-####.pl'.  
+
+3A) Delete any files in 'splitcode/year_regex_output_INDICATOR/'.  The sge script will not right now overwrite existing files.
+3B) Run 'splitcode/set_sge_lev_INDICATOR.sh to do the actual regular expression matches between the WOS|MAG source data and the patent files for 1900-2017.  This is by far the greatest step computationally but is 117 times parallelized so doesn't take that long in real time.  This will output to 'splitcode/year_regex_output_INDICATOR/year####.txt'.
+
+
+
+########################
+GATHERING POTENTIAL MATCHES AND SCORING THEM
+Directory: /projectnb/marxnsf1/dropbox/bigdata/nplmatch/process_matches/
+The potential matches generated from splitcode and splittitle and must be collected with duplicates removed.
+1. Run 'process_matches/sge_collectmatches_INDICATOR.sh. This copies splittitle & splitcode's year_regex_output_INDICATOR contents for each year's files and does a sort unique on them to remove duplicates. There's still a small chance of duplicates across years.
+2. Then you need to combine all of those, along with the no-year, no-author, title-only matches from nplmatch/inputs/inputs/npl/nplsnotmatched/notfoundnplsbytitlematches.tsv. Just cat them all into bothmatchestoscore_INDICATOR.tsv, removing duplicates if you like though this is a massive file and sort-u will run very slowly. we will remove duplicates after scoring anyway.
+2. Run 'score_matches_INDICATOR.sh'. This will chop the bothmatchestoscore_INDICATOR.tsv into hundreds (maybe thousands) of pieces in the 'pieces/scoredINDICATOR' subdirectory and then execute sge_score_matches_mag.sh on each piece in parallel. Finally, it will combine all of the resulting scored matches -- a tiny subset of the original file -- and sort them uniquely into scoredmag.tsv.
+
+####
+SORTING SCORED MATCHES
+Directory: /proejctnb/marxnsf1/dropbox/bigdata/nplmatch/sort_scored_results
+1. pre-sort the scored matches by running sortmag.sh in a directory where you have a copy of scoredmag.tsv (!!! CURENTLY HARDCODED - NO WOS VERSION). this writes scoredmag_sorted.tsv
+2. run 'findbest_match.pl scoredmag_sorted.tsv > OUTPUTFILE' where OUTPUTFILE is what you want it to save to (writes to stdout). 
+
+now, at long last, you have the best match for each NPL!
+

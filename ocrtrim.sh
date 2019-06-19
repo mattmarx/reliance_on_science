@@ -1,0 +1,1 @@
+ cat npl.1926.1975 | sed -e 's/[0-9][0-9][0-9][0-9]\tOTHER REFERENCES//' | sed -e 's/[A-Z\. \-]*, Primary Examiner.*//' |  sed -E 's/([A-Za-z])[@\<\>\%\^\&\*]([A-Za-z])/\1a\2/g' | ocrnpldash.pl > npl.1926.1975-patnplOCRautofix.tsv

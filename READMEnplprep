@@ -1,0 +1,14 @@
+this gets the unstructured patent NPL files ready for the matching algorithm. 
+
+just run prepnpls.sh and skip the rest of this
+
+-----
+
+0. this assumes that two files exist in the directory: a) npl.1976-2017.tsv, which has the unstructured NPL citations from 1976-2017 b) npl.1926.1975, which has the OCRed unstructured NPL citations from 1926-1975. 
+
+1. to "correct" the OCRed cites before 1976, run ./ocrtrim.sh. this calls ocrnpldash.pl and places the output in npl.1926.1976-patnplOCRautofix.tsv
+
+2. combine that and the post-1975 cites, lowercasing them and removing crap. the command for this is
+cat npl.1926.1975-patnplOCRautofix.tsv npl.1976-2017.tsv npl.2018.tsv  | tr [:upper:] [:lower:] | perl screen_npljunk.pl > npl.1926.2018-lowercaseOCRautofixnononsci.tsv
+
+3. now we need to split this master file into year by year. to do this, run terracenpl.sh, which will place a file for each year's references into nplbyrefyear/nplc_<year>.tsv. note that this could be an array job but runs relatively quickly single-threaded.
