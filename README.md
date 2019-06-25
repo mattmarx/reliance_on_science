@@ -3,36 +3,36 @@ The codes necessary to replicate [Marx/Fuegi 2019](https://papers.ssrn.com/sol3/
 # DISCLAIMERS
 The code is unsupported and is largely undocumented. It is provided primarily for those interested in understanding how the NPL linkages to MAG were accomplished. Moreover, it is executable only in a Sun Grid Engine (or similar) Unix environment with STATA installed as well as several packages including ftools and gtools and the Perl module Text::LevenshteinXS. It assumes the directory structure described below and contains hardcoded, fully-qualified pathnames. Moreover, you will need at least 5 terabytes of disk space, perhaps as much as 10.
 
-There are four general steps in executing the matches. First, preparing the MAG data. Second, preparing the NPL data. Third, generating a first-pass set of "loose" matches. Fourth, scoring those "loose" matches and picking the best match for each NPL. Each of these major steps includes a number of sub-steps; there is no "master" script to run the process from beginning to end. 
+There are four general steps in executing the matches: First, preparing the MAG data. Second, preparing the NPL data. Third, generating a first-pass set of "loose" matches. Fourth, scoring those "loose" matches and picking the best match for each NPL. Each of these major steps includes a number of sub-steps; there is no "master" script to run the process from beginning to end. 
 
 # DIRECTORY STRUCTURE
 
 Many of the programs assume /project/nb/marxnsf1/dropbox/ but this can be replaced by another prefix (but should be a fully-qualified pathname, not a relative reference – no environment variable is set to easily substitute, sorry). Beneath that directory, the necessary structure is:
 
-mag
-mag/code
-mag/dta
-mag/txt
-nplmatch
-nplmatch/inputs
-nplmatch/inputs/mag
-nplmatch/inputs/mag/magbyyear
-nplmatch/inputs/npl
-nplmatch/inputs/npl/nplbyrefyear
-nplmatch/inputs/journalabbrev
-nplmatch/splityear
-nplmatch/splitword
-nplmatch/splittitle
-nplmatch/splittitle/year_regex_scripts_mag
-nplmatch/splittitle/year_regex_output_mag
-nplmatch/splitcode
-nplmatch/splitcode/year_regex_scripts_mag
-nplmatch/splitcode/year_regex_output_mag
-nplmatch/process_matches
-nplmatch/process_matches/peryearuniqmatches
-nplmatch/process_matches/peryearuniqmatches/mag
-nplmatch/process_matches/pieces
-nplmatch/sort_scored_matches
+-mag
+-mag/code
+-mag/dta
+-mag/txt
+-nplmatch
+-nplmatch/inputs
+-nplmatch/inputs/mag
+-nplmatch/inputs/mag/magbyyear
+-nplmatch/inputs/npl
+-nplmatch/inputs/npl/nplbyrefyear
+-nplmatch/inputs/journalabbrev
+-nplmatch/splityear
+-nplmatch/splitword
+-nplmatch/splittitle
+-nplmatch/splittitle/year_regex_scripts_mag
+-nplmatch/splittitle/year_regex_output_mag
+-nplmatch/splitcode
+-nplmatch/splitcode/year_regex_scripts_mag
+-nplmatch/splitcode/year_regex_output_mag
+-nplmatch/process_matches
+-nplmatch/process_matches/peryearuniqmatches
+-nplmatch/process_matches/peryearuniqmatches/mag
+-nplmatch/process_matches/pieces
+-nplmatch/sort_scored_matches
 
 # PROGRAMS TO RUN
 ## STEP 1: PREPARE MAG FILES
