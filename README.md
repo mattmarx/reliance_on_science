@@ -9,31 +9,31 @@ There are four general steps in executing the matches: First, preparing the MAG 
 
 Many of the programs assume /project/nb/marxnsf1/dropbox/ but this can be replaced by another prefix (but should be a fully-qualified pathname, not a relative reference – no environment variable is set to easily substitute, sorry). Beneath that directory, the necessary structure is:
 
--mag
--mag/code
--mag/dta
--mag/txt
--nplmatch
--nplmatch/inputs
--nplmatch/inputs/mag
--nplmatch/inputs/mag/magbyyear
--nplmatch/inputs/npl
--nplmatch/inputs/npl/nplbyrefyear
--nplmatch/inputs/journalabbrev
--nplmatch/splityear
--nplmatch/splitword
--nplmatch/splittitle
--nplmatch/splittitle/year_regex_scripts_mag
--nplmatch/splittitle/year_regex_output_mag
--nplmatch/splitcode
--nplmatch/splitcode/year_regex_scripts_mag
--nplmatch/splitcode/year_regex_output_mag
--nplmatch/process_matches
--nplmatch/process_matches/peryearuniqmatches
--nplmatch/process_matches/peryearuniqmatches/mag
--nplmatch/process_matches/pieces
--nplmatch/sort_scored_matches
-
+- mag
+- mag/code
+- mag/dta
+- mag/txt
+- nplmatch
+- nplmatch/inputs
+- nplmatch/inputs/mag
+- nplmatch/inputs/mag/magbyyear
+- nplmatch/inputs/npl
+- nplmatch/inputs/npl/nplbyrefyear
+- nplmatch/inputs/journalabbrev
+- nplmatch/splityear
+- nplmatch/splitword
+- nplmatch/splittitle
+- nplmatch/splittitle/year_regex_scripts_mag
+- nplmatch/splittitle/year_regex_output_mag
+- nplmatch/splitcode
+- nplmatch/splitcode/year_regex_scripts_mag
+- nplmatch/splitcode/year_regex_output_mag
+- nplmatch/process_matches
+- nplmatch/process_matches/peryearuniqmatches
+- nplmatch/process_matches/peryearuniqmatches/mag
+- nplmatch/process_matches/pieces
+- nplmatch/sort_scored_matches
+ 
 # PROGRAMS TO RUN
 ## STEP 1: PREPARE MAG FILES
 1. download from MAG the following files into the mag/txt directory: Papers.txt, ConferenceSeries.txt, Journals.txt, Authors.txt, and Affiliations.txt. Instructions for accessing MAG are [here](https://www.microsoft.com/en-us/research/project/microsoft-academic-graph/). You will need to create an Azure account in order to download the files. You may be able to download a recent snapshot [here](https://zenodo.org/record/2628216#.XRJHwIGSlGo).
