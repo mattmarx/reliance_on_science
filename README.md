@@ -7,7 +7,7 @@ There are four general steps in executing the matches: First, preparing the MAG 
 
 # DIRECTORY STRUCTURE
 
-Many of the programs assume /project/nb/marxnsf1/dropbox/ but this can be replaced by another prefix (but should be a fully-qualified pathname, not a relative reference – no environment variable is set to easily substitute, sorry). Beneath that directory, the necessary structure is:
+Many of the programs assume /project/nb/marxnsf1/dropbox/ but this can be replaced by another prefix (but should be a fully-qualified pathname, not a relative reference â€“ no environment variable is set to easily substitute, sorry). Beneath that directory, the necessary structure is:
 
 - mag
 - mag/code
@@ -58,7 +58,8 @@ Many of the programs assume /project/nb/marxnsf1/dropbox/ but this can be replac
 ## STEP 3: DO THE "LOOSE" FIRST-PASS MATCHING
 1. copy the files journalabbrevs.tsv and journalabbrevs-extended.tsv to the nplmatch/inputs/journalabbrev.
 1. copy the files commonsurnames.csv, verycommonsurnames.csv, probablyonlywords.txt to nplmatch/process_matches.
-1. in nplmatch/splitword, run _splitword.sh_ to submit an array job that runs splitword.pl for each year from 1800-2018. This creates a hash of all words in the NPLs in subdirectories of nplmatch/splitword such as '1980/a/c/achieve' containing all 1980 NPLs that include the word "ahieve"
+1. in nplmatch/splitword, run _splitword.sh_ to submit an array job that runs splitword.pl for each year from 1800-2018. This creates a hash of all words in the NPLs in subdirectories of nplmatch/splitword such as '1980/a/c/achieve' containing all 1980 NPLs that include the word "achieve"
+1. in nplmatch/splityear, run _splityear.sh_ to submit an array job that runs splityear.pl for each year from 1800-2018. This creates a hash of all numerical strings in the NPLs in subdirectories of nplmatch/splityear containing all NPLs that include a given numerical string.
 1. in nplmatch/splittitle, run _"buildtitleregex_1799_lev.pl mag"_ to generate rules for NPLs without years in nplmatch/splittitle/year_regex_scripts_mag.  These rules are based on primary author surname in MAG and finding either the longest or second longes word in the title.
 1. in nplmatch/splittitle, run _sge_buildtitleregex_magLEV.sh_ to generate rules for NPLs with years in nplmatch/splittitle/year_regex_scripts_mag.  These rules are based on primary author surname in MAG and finding either the longest or second longes word in the title.
 1. in nplmatch/splittitle, run _set_sge_lev_mag_splittitle.sh_ to simultaneously apply the generated rules against the NPL data
